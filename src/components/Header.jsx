@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -33,8 +33,23 @@ const socials = [
 ];
 
 const Header = () => {
-  const prevScrollPosition = useRef(null);
   const boxRef = useRef(null);
+  const [prevScrollPosition, setPrevScrollPosition] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPosition = window.scrollY;
+      prevScrollPosition > currentScrollPosition
+        ? (boxRef.current.style.transform = "translateY(0)")
+        : (boxRef.current.style.transform = "translateY(-200px)");
+      setPrevScrollPosition(currentScrollPosition);
+    };
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [prevScrollPosition]);
 
   const handleClick = (anchor) => () => {
     const id = `${anchor}-section`;
@@ -47,19 +62,7 @@ const Header = () => {
     }
   };
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const handleScroll = () => {
-    const scrollY = window.scrollY;
-    prevScrollPosition.current = scrollY;
-    const translateY = scrollY > 0 ? "-200px" : "0";
-    boxRef.current.style.transform = `translateY(${translateY})`;
-  };
+  console.log(window.scrollY);
   return (
     <Box
       ref={boxRef}
@@ -87,27 +90,19 @@ const Header = () => {
                   key={social.url}
                   href={social.url}
                   target="_blank"
+                  rel="noreferrer"
                 >
-                  <FontAwesomeIcon
-                    icon={social.icon}
-                    size="2x"
-                  />
+                  <FontAwesomeIcon icon={social.icon} size="2x" />
                 </a>
               ))}
             </HStack>
           </nav>
           <nav>
             <HStack spacing={8} alignItems="center">
-              <a
-                href="#projects-section"
-                onClick={handleClick}
-              >
+              <a href="#projects-section" onClick={handleClick}>
                 Projects
               </a>
-              <a
-                href="#contactme-section"
-                onClick={handleClick}
-              >
+              <a href="#contactme-section" onClick={handleClick}>
                 Contact Me
               </a>
             </HStack>
