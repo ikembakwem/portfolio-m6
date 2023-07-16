@@ -36,7 +36,7 @@ const LandingSection = () => {
       message: "",
     },
     onSubmit: (values) => {
-      submit("/response", values);
+      submit("/", values);
     },
     validationSchema: Yup.object({
       firstName: Yup.string().required("Required"),
@@ -49,6 +49,10 @@ const LandingSection = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     formik.handleSubmit();
+    onOpen(response.type, response.message);
+    if (response.type === "success") {
+      formik.resetForm();
+    }
   };
 
   return (
@@ -97,11 +101,15 @@ const LandingSection = () => {
               <FormControl>
                 <FormLabel htmlFor="type">Type of enquiry</FormLabel>
                 <Select id="type" name="type" {...formik.getFieldProps("type")}>
-                  <option value="hireMe">Freelance project proposal</option>
-                  <option value="openSource">
+                  <option style={{ color: "#777" }} value="hireMe">
+                    Freelance project proposal
+                  </option>
+                  <option style={{ color: "#777" }} value="openSource">
                     Open source consultancy session
                   </option>
-                  <option value="other">Other</option>
+                  <option style={{ color: "#777" }} value="other">
+                    Other
+                  </option>
                 </Select>
               </FormControl>
               <FormControl
@@ -118,7 +126,12 @@ const LandingSection = () => {
                 />
                 <FormErrorMessage>{formik.errors.comment}</FormErrorMessage>
               </FormControl>
-              <Button type="submit" colorScheme="purple" width="full">
+              <Button
+                type="submit"
+                colorScheme="purple"
+                width="full"
+                isLoading={isLoading}
+              >
                 Submit
               </Button>
             </VStack>
